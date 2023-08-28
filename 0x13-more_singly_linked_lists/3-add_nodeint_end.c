@@ -20,18 +20,24 @@ listint_t *add_nodeint_end(listint_t **head, int n)
 
     if (*head == NULL)
     {
-        // If the list is empty, set the new node as the head
+        /**
+	 * If the list is empty, set the new node as the head
+	 **/
         *head = new_node;
     }
     else
     {
-        // Traverse to the end of the list
+        /** 
+	 * Traverse to the end of the list
+	 */
         current = *head;
         while (current->next != NULL)
         {
             current = current->next;
         }
-        // Append the new node to the end
+        /**
+	 *  Append the new node to the end
+	 */
         current->next = new_node;
     }
 

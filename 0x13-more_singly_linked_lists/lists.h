@@ -5,15 +5,15 @@
 /*
 *LISTS_H file contains all function prototypes for functions used in more linked lists project.
 */
-typedef struct listint_t
+typedef struct listint_s
 {
-    int *n;
-    unsigned int len;
-    struct listint_t *next;
+    int n;
+    struct listint_s *next;
 } listint_t;
 size_t print_listint(const listint_t *h);
 size_t listint_len(const listint_t *h);
 listint_t *add_nodeint(listint_t **head, const int n);
 listint_t *add_nodeint_end(listint_t **head, const int n);
+void free_listint(listint_t *head);
 
-#endif // LISTS_H
+#endif
