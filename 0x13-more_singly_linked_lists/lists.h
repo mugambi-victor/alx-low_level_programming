@@ -2,13 +2,16 @@
 #define LISTS_H
 #include <stddef.h>
 
-/**
- * Description: lists.h file contains all function prototypes
- * for functions used in more linked lists project.
+/*
+ * File: lists.h
+ * Desc: Header file containing prototypes and definitions for all functions
+ *       and types written in the 0x13-more_singly_linked_lists directory.
  */
 
+#include <stdlib.h>
+
 /**
- * listint_s - singly linked list
+ * struct listint_s - singly linked list
  * @n: integer
  * @next: points to the next node
  *
