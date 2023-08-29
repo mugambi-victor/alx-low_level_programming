@@ -5,7 +5,7 @@
  * elements in a linked list.
  * @head: A pointer to the head node of the linked list.
  */
-void reverse_listint(listint_t **head)
+listint_t *reverse_listint(listint_t **head)
 {
 	listint_t *prev = NULL;
 	listint_t *current = *head;
@@ -30,4 +30,6 @@ void reverse_listint(listint_t **head)
 	 * the new first node (previously last node)
 	 */
 	*head = prev;
+
+	return (*head);
 }
