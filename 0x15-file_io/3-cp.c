@@ -76,7 +76,7 @@ int open_source_file(const char *filename)
  */
 int open_destination_file(const char *filename)
 {
-       	mode_t file_permissions = S_IRUSR | S_IWUSR | S_IRGRP;
+	mode_t file_permissions = S_IRUSR | S_IWUSR | S_IRGRP;
 	int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, file_permissions);
 
 	if (fd == -1)
