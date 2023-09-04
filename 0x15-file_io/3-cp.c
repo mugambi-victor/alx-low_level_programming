@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #define BUFFER_SIZE 1024
 
@@ -75,11 +76,29 @@ int open_source_file(const char *filename)
  */
 int open_destination_file(const char *filename)
 {
-	mode_t file_permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+       	mode_t file_permissions = S_IRUSR | S_IWUSR | S_IRGRP;
 	int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, file_permissions);
 
 	if (fd == -1)
+	{
 		dprintf(2, "Error: Can't write to %s\n", filename);
+	}
+	else
+	{
+		/**
+		 * check if the file was just created
+		 */
+
+		if (errno == EEXIST)
+		{
+			/**
+			 * If the file already existed, don't change its permissions
+			 */
+			file_permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+			chmod(filename, file_permissions);
+		}
+	}
+
 	return (fd);
 }
 /**
