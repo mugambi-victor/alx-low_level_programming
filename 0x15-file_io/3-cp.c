@@ -6,8 +6,11 @@
 
 #define BUFFER_SIZE 1024
 
+int open_source_file(const char *filename);
+int open_destination_file(const char *filename);
+ssize_t read_and_write(int src_fd, int dest_fd);
 /**
- * main - Copy the content of a file to another file.
+ * main - Entry point of the program.
  *
  * @argc: The number of command-line arguments.
  * @argv: An array of command-line arguments.
@@ -16,58 +19,78 @@
  */
 int main(int argc, char *argv[])
 {
-	int fd_from, fd_to, bytes_read, bytes_written;
-	char buffer[BUFFER_SIZE];
-	mode_t file_permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+	int src_fd,dest_fd;
+	ssize_t result;
 
 	if (argc != 3)
 	{
 		dprintf(2, "Usage: %s file_from file_to\n", argv[0]);
 		return (97);
 	}
+	src_fd = open_source_file(argv[1]);
 
-	fd_from = open(argv[1], O_RDONLY);
-	if (fd_from == -1)
-	{
-		dprintf(2, "Error: Can't read from file %s\n", argv[1]);
+	if (src_fd == -1)
 		return (98);
-	}
 
-	fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, file_permissions);
-	if (fd_to == -1)
+	dest_fd = open_destination_file(argv[2]);
+
+	if (dest_fd == -1)
 	{
-		dprintf(2, "Error: Can't write to %s\n", argv[2]);
-		close(fd_from);
+		close(src_fd);
 		return (99);
 	}
 
-	while ((bytes_read = read(fd_from, buffer, BUFFER_SIZE)) > 0)
+	result = read_and_write(src_fd, dest_fd);
+
+	if (close(src_fd) == -1 || close(dest_fd) == -1)
 	{
-		bytes_written = write(fd_to, buffer, bytes_read);
+		dprintf(2, "Error: Can't close file descriptors\n");
+		return (100);
+	}
+
+	return (result == -1 ? 98 : 0);
+}
+
+int open_source_file(const char *filename)
+{
+	int fd = open(filename, O_RDONLY);
+
+	if (fd == -1)
+		dprintf(2, "Error: Can't read from file %s\n", filename);
+	return (fd);
+}
+
+int open_destination_file(const char *filename)
+{
+	mode_t file_permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+	int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, file_permissions);
+
+	if (fd == -1)
+		dprintf(2, "Error: Can't write to %s\n", filename);
+	return (fd);
+}
+
+ssize_t read_and_write(int src_fd, int dest_fd)
+{
+	char buffer[BUFFER_SIZE];
+	ssize_t bytes_read, bytes_written, total_bytes_written = 0;
+
+	while ((bytes_read = read(src_fd, buffer, BUFFER_SIZE)) > 0)
+	{
+		bytes_written = write(dest_fd, buffer, bytes_read);
 		if (bytes_written == -1)
 		{
-			dprintf(2, "Error: Can't write to %s\n", argv[2]);
-			close(fd_from);
-			close(fd_to);
-
-			return (99);
+			dprintf(2, "Error: Can't write to destination file\n");
+			return (-1);
 		}
+		total_bytes_written += bytes_written;
 	}
 
 	if (bytes_read == -1)
 	{
-		dprintf(2, "Error: Can't read from file %s\n", argv[1]);
-		close(fd_from);
-		close(fd_to);
-
-		return (98);
+		dprintf(2, "Error: Can't read from source file\n");
+		return (-1);
 	}
 
-	if (close(fd_from) == -1 || close(fd_to) == -1)
-	{
-		dprintf(2, "Error: Can't close fd %d\n", (fd_from == -1) ? fd_to : fd_from);
-		return (100);
-	}
-
-	return (0);
+	return (total_bytes_written);
 }
