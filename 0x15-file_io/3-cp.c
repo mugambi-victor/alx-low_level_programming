@@ -45,8 +45,7 @@ int main(int argc, char *argv[])
 		handle_error("Can't open destination file", argv[2], 99);
 	}
 
-	do
-	{
+	do {
 		r = read(from, buffer, BUFFER_SIZE);
 		if (r == -1)
 		{
