@@ -1,5 +1,8 @@
 #include <stdio.h>
-
+/**
+ * get_endianness - Determines the endianness of the system.
+ * Return: 1 if the system is Little Endian, 0 if it is Big Endian.
+ */
 int get_endianness(void)
 {
 	unsigned int num = 1;
